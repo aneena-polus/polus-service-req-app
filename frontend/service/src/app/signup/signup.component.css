@@ -1,0 +1,16 @@
+.sign-up-form {
+    background-color: #006241;
+    color: white;
+    font-size: 12px;
+}
+
+.signup-container {
+    position: relative;
+    background: linear-gradient(to top, lightgrey 0%, lightgrey 1%, #e0e0e0 26%, #efefef 48%, #d9d9d9 75%, #bcbcbc 100%);
+    min-height: 100vh;
+}
+
+.text-color { color: #d0ebe2; }
+
+.red-border-class { border: #ff0000 1px solid; }
+

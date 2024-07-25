@@ -1,0 +1,95 @@
+<nav class="navbar navbar-expand-lg navbar-light">
+	<div class="container-fluid">
+		<a href="https://www.polussolutions.com/" class="navbar-brand">
+			<img src="https://www.polussolutions.com/wp-content/uploads/2023/09/logo-1536x428.webp" height="28"
+				alt="Polus" tabindex="0">
+		</a>
+		<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarCollapse">
+			<div class="navbar-nav">
+				<button routerLink="createticket" class="btn text-white button shadow-none btn-hover" tabindex="0"
+					title="create a new ticket" aria-label="Click to create ticket" (click)="setActiveStatus('createTicket')"
+					[ngClass]="{ 'active': activeStatus === 'createTicket' }">
+					Create Ticket</button>
+				<button routerLink="ticketrequest" class="btn text-white button shadow-none btn-hover" tabindex="0"
+					title="your ticket requests" aria-label="Click to view ticket requests"
+					(click)="setActiveStatus('ticketRequests')"
+					[ngClass]="{ 'active': activeStatus === 'ticketRequests' }">
+					Ticket Requests</button>
+				<button routerLink="admindashboard" class="btn text-white button active shadow-none btn-hover"
+					tabindex="0" *ngIf="role === 'admin'" title="admin dashboard"
+					aria-label="Click to go to admin dashboard" (click)="setActiveStatus('adminDashboard')"
+					[ngClass]="{ 'active': activeStatus === 'adminDashboard' }">Admin
+					Dashboard</button>
+			</div>
+			<div class="navbar-nav ms-auto">
+				<button class="btn bg-transparent text-white active shadow-none shadow-none btn-hover" tabindex="0"
+					data-bs-toggle="modal" title="user details" aria-label="Click to view user details"
+					data-bs-target="#userDetailsPopUp">
+					<i class="fa-solid fa-user"></i> {{ loggedInUser.username }}</button>
+				<button class="btn bg-transparent text-white btn-hover" title="log out" aria-label="Log out button"
+					routerLink="login" tabindex="0">
+					<i class="fa fa-sign-out" aria-hidden="true"></i>
+				</button>
+			</div>
+		</div>
+	</div>
+</nav>
+
+<div class="modal fade" id="userDetailsPopUp" tabindex="-1" aria-labelledby="User Details Pop Up" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content custom-rounded-border">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5 text-success" id="userDetailsTitle" aria-label="User Details" tabindex="0">
+					User Details</h1>
+				<button type="button" class="btn-close" id="userDetailsCloseBtn" data-bs-dismiss="modal" title="close"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div id="firstname" class="col-6 mb-2" title="first name" aria-label="first name" tabindex="0">
+						<div class="fw-bold">First Name</div>
+						<div class="custom-spacing" tabindex="0">{{ loggedInUser.firstname }}</div>
+					</div>
+					<div id="lastname" class="col-6" title="last name" aria-label="last name" tabindex="0">
+						<div class="fw-bold">Last Name</div>
+						<div class="custom-spacing" tabindex="0">{{ loggedInUser.lastname }}</div>
+					</div>
+				</div>
+				<div class="row mb-2">
+					<div id="email" class="col-lg-6 col-md-6 col-sm-12" title="email" aria-label="email" tabindex="0">
+						<div class="fw-bold">Email</div>
+						<div class="custom-spacing" tabindex="0">{{ loggedInUser.email }}</div>
+					</div>
+					<div id="phone_number" class="col-lg-6 col-md-6 col-sm-12" title="phone Number"
+						aria-label="phone Number" tabindex="0">
+						<div class="fw-bold">Phone Number</div>
+						<div class="custom-spacing" tabindex="0">{{ loggedInUser.phoneNumber }}</div>
+					</div>
+				</div>
+				<div class="row mb-2">
+					<div id="state" class="col-6" title="state" aria-label="state" tabindex="0">
+						<div class="fw-bold">State</div>
+						<div class="custom-spacing" tabindex="0">{{ loggedInUser.state }}</div>
+					</div>
+					<div id="country" class="col-6" title="country" aria-label="country" tabindex="0">
+						<div class="fw-bold">Country Name</div>
+						<div class="custom-spacing" tabindex="0">{{ loggedInUser.countryCode?.countryName }}</div>
+					</div>
+				</div>
+				<div id="designation" class="mb-2" title="designation" aria-label="designation" tabindex="0">
+					<div class="fw-bold">Designation</div>
+					<div class="custom-spacing" tabindex="0">{{ loggedInUser.designation }}</div>
+				</div>
+				<div id="roles" class="fw-bold" tabindex="0">Roles</div>
+				<ul id="select_roles" title="roles" aria-label="roles">
+					<li class="custom-spacing" *ngFor="let role of loggedInUser.roles" id="rolename" tabindex="0">{{
+						role.roleName }}</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<router-outlet></router-outlet>

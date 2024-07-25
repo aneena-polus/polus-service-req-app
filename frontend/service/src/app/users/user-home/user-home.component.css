@@ -1,0 +1,11 @@
+nav { background-color: #006241; }
+
+.button.active {
+  color: #c4aedf !important;
+  font-weight: bolder;
+}
+
+.btn-hover:hover {
+  color: #c4aedf !important;
+  border-color: #c4aedf !important;
+}

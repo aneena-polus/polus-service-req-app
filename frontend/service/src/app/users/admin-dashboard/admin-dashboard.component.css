@@ -1,0 +1,7 @@
+.btn.active { background-color: #e2f3e6; }
+
+.date-text { font-size: 12px; }
+
+::ng-deep .custom-badge .mat-badge-content { background-color: #4caf50; }
+
+.btn-hover:hover { background-color: #e2f3e6; }

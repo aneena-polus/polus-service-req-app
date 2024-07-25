@@ -1,0 +1,10 @@
+.ticket-container {
+  position: relative;
+  min-height: 80vh;
+}
+
+.red-border-class { border: #ff0000 1px solid; }
+
+.text-justify { text-align: justify; }
+
+.service-textbox { background-color: #006241; }

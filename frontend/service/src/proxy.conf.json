@@ -1,0 +1,114 @@
+{
+	"/api/login": {
+		"target": "http://10.199.100.139:8080/api/auth/login",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/api/login": ""
+		}
+	},
+	"/api/signup": {
+		"target": "http://10.199.100.139:8080/api/auth/signup",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/api/signup": ""
+		}
+	},
+	"/api/country": {
+		"target": "http://10.199.100.139:8080/api/country/getallcountries",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/api/country": ""
+		}
+	},
+	"/api/tickettype": {
+		"target": "http://10.199.100.139:8080/api/ticket/getalltickettype",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/api/tickettype": ""
+		}
+	},
+	"/api/createticket": {
+		"target": "http://10.199.100.139:8080/api/ticket/generateticket",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/api/createticket": ""
+		}
+	},
+	"/api/getticket": {
+		"target": "http://10.199.100.139:8080/api/ticket/response",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/api/getticket": ""
+		}
+	},
+	"/api/countticket": {
+		"target": "http://10.199.100.139:8080/api/ticket/ticketcount",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/api/countticket": ""
+		}
+	},
+	"/api/deleteticket": {
+		"target": "http://10.199.100.139:8080/api/ticket/deleteticket",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/api/deleteticket": ""
+		}
+	},
+	"/api/adminassign": {
+		"target": "http://10.199.100.139:8080/api/ticket/assignadmin",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/api/adminassign": ""
+		}
+	},
+	"/api/assignedtome": {
+		"target": "http://10.199.100.139:8080/api/ticket/assignedtome",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/api/assignedtome": ""
+		}
+	},
+	"/api/statuschange": {
+		"target": "http://10.199.100.139:8080/api/ticket/statuschange",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/api/statuschange": ""
+		}
+	},
+	"/api/employeelist": {
+		"target": "http://10.199.100.139:8080/api/auth/employeelist",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/api/employeelist": ""
+		}
+	},
+	"/api/setrole": {
+		"target": "http://10.199.100.139:8080/api/auth/setrole",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/api/setrole": ""
+		}
+	},
+	"/api/newtickettype": {
+		"target": "http://10.199.100.139:8080/api/ticket/createtickettype",
+		"secure": false,
+		"changeOrigin": true,
+		"pathRewrite": {
+			"^/api/newtickettype": ""
+		}
+	}
+}
