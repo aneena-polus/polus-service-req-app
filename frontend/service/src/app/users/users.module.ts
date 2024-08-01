@@ -26,7 +26,7 @@ import { MatBadgeModule } from '@angular/material/badge';
     AdminDashboardComponent,
     StatuschangeComponent,
     UsertoadminComponent,
-    CreateserviceComponent,
+    CreateserviceComponent
   ],
   imports: [
     CommonModule,

@@ -1,19 +1,19 @@
 <div class="d-flex justify-content-center align-items-center">
-	<div class="container">
-		<div class="row justify-content-center">
-			<div class="col-12">
-				<div class="form form-control-sm p-3" aria-label="Delete Form">
-					<h3 class="text-success py-3 text-center" title="heading" tabindex="0">Confirmation</h3>
-					<p tabindex="0">Are You Sure You Want To Delete?</p>
-					<div class="d-flex flex-row justify-content-end align-items-center my-4">
-						<button class="btn btn-secondary btn-sm mx-2" id="cancelBtn" tabindex="0" title="cancel"
-							aria-label="Cancel button" role="button" (click)="onDismiss()">Cancel</button>
-						<button type="button" class="btn btn-success btn-sm" id="confirmDeleteBtn" tabindex="0"
-							title="Delete" aria-label="Delete button" role="button" (click)="onConfirm()">Delete
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="form form-control-sm p-3" aria-label="Delete Form">
+                    <h3 class="text-success py-3 text-center" title="heading" tabindex="0">Confirmation</h3>
+                    <p tabindex="0">Are you sure you want to delete <B>'{{ticketDesc}}'</B>?</p>
+                    <div class="d-flex flex-row justify-content-end align-items-center my-4">
+                        <button class="btn btn-secondary btn-sm mx-2" id="cancelBtn" tabindex="0" title="cancel"
+                            aria-label="Cancel button" role="button" (click)="onDismiss()">Cancel</button>
+                        <button type="button" class="btn btn-success btn-sm" id="confirmDeleteBtn" tabindex="0"
+                            title="Delete" aria-label="Delete button" role="button" (click)="onConfirm()">Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

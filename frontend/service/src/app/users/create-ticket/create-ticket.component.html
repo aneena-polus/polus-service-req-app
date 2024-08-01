@@ -1,129 +1,115 @@
-<div class="ticket-container m-2 d-flex justify-content-center align-items-center">
-	<div class="container">
-		<div class="row justify-content-center">
-			<div class="col-lg-4 col-md-9 col-sm-12 mb-3">
-				<div class="form service-textbox form-control-sm shadow-lg p-3 rounded text-center h-100">
-					<h2 class="text-light" title="heading" tabindex="0">Welcome to Service App!</h2>
-					<p class="text-light text-justify" tabindex="0">
-						Welcome to the Service App! This platform simplifies the process of creating and managing
-						service tickets. Whether you need technical support, maintenance services, or any other
-						assistance, our
-						user-friendly interface ensures a seamless experience. Simply select the type of service you
-						require, provide a brief description, and submit your request. Our dedicated team will promptly
-						address
-						your needs, ensuring efficient and effective resolutions. Thank you for choosing our service -
-						we are here
-						to help you.
-					</p>
-				</div>
-			</div>
-			<div class="col-lg-8 col-md-9 col-sm-12">
-				<form class="form form-control-sm shadow-lg p-3 rounded" aria-label="Create Ticket Form">
-					<h2 class="text-success d-flex justify-content-center align-items-center" title="heading"
-						tabindex="0">Create
-						Ticket</h2>
-					<div class="row mb-2">
-						<div class="col-12">
-							<label class="form-label fw-bold" for="service_type" tabindex="0">Service type</label>
-							<span class="fw-bold text-danger">*</span>
-						</div>
-						<div class="col-12">
-							<div class="form-outline">
-								<select id="serviceTypes" class="form-select" name="serviceTypes"
-									[(ngModel)]="serviceType" aria-label="Select a service type" aria-required="true"
-									tabindex="0"
-									[ngClass]="{'red-border-class': errorMap.has('ticketTypeMessage') && !isFormSubmitted}"
-									required>
-									<option disabled selected value="">Select service types</option>
-									<option *ngFor="let service of serviceTypes" [value]="service.ticketTypeId"
-										tabindex="0">
-										{{ service.ticketType }}
-									</option>
-								</select>
-								<div *ngIf="errorMap.has('ticketTypeMessage') && !isFormSubmitted" id="errorMessage"
-									class="font-weight-bold text-danger" tabindex="0">
-									{{errorMap.get('ticketTypeMessage')}}
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row mb-2">
-						<div class="col-12">
-							<label class="form-label fw-bold" for="description" tabindex="0">Description</label>
-							<span class="fw-bold text-danger">*</span>
-						</div>
-						<div class="col-12">
-							<textarea class="form-control" id="description" rows="5" name="description" tabindex="0"
-								aria-label="Click to enter a description of service you require" aria-required="true"
-								[(ngModel)]="serviceDesc"
-								[ngClass]="{'red-border-class': errorMap.has('serviceDescMessage') && !isFormSubmitted}"
-								required></textarea>
-							<div *ngIf="errorMap.has('serviceDescMessage') && !isFormSubmitted" id="errorMessage"
-								class="font-weight-bold text-danger" tabindex="0">
-								{{errorMap.get('serviceDescMessage')}}
-							</div>
-						</div>
-					</div>
-					<div class="d-flex flex-column align-items-end mb-2">
-						<button type="submit" class="btn btn-success btn-sm px-2 mt-3" id="createTicketBtn" tabindex="0"
-							title="Create" aria-label="Create Ticket button" role="button"
-							(click)="createTicket()" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false">Create
-						</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class="container collapse" id="collapseExample">
-	<div class="row justify-content-center pb-4">
-		<div class="col-lg-12 col-md-9 col-sm-12">
-			<form class="form form-control-sm shadow-lg p-3 rounded" aria-label="Ticket Requests Form">
-				<div class="row mb-2">
-					<div class="col-6">
-						<div class="row mb-2">
-							<div class="col-lg-12 col-sm-4">
-								<label class="form-label fw-bold" aria-label="service type" for="service_type"
-									tabindex="0">Service type</label>
-							</div>
-							<div class="col-lg-12 col-sm-8 custom-spacing" id="serviceType" tabindex="0">
-								{{createdTicket?.ticketType?.ticketType}}
-							</div>
-						</div>
-						<div class="row mb-2">
-							<div class="col-lg-12 col-sm-4">
-								<label class="form-label fw-bold" aria-label="Ticket Status" for="status"
-									tabindex="0">Status</label>
-							</div>
-							<div class="col-lg-12 col-sm-8 custom-spacing" tabindex="0">
-								<span class="text-muted custom-spacing">
-                  <span class="spinner-border text-primary status-icon" role="status"></span> In progress</span>
-							</div>
-						</div>
-					</div>
-					<div class="col-6">
-						<div class="row mb-2">
-							<div class="col-lg-12 col-sm-4">
-								<label class="form-label fw-bold" aria-label="Ticket Description" for="description"
-									tabindex="0">Description</label>
-							</div>
-							<div class="col-lg-12 col-sm-8 custom-spacing" id="ticketDescription" tabindex="0">
-								{{createdTicket?.ticketDescription}}
-							</div>
-						</div>
-						<div class="row mb-2">
-							<div class="col-lg-12 col-sm-4">
-								<label class="form-label fw-bold" aria-label="Created time" for="createdTime"
-									tabindex="0">Created Time</label>
-							</div>
-							<div class="col-lg-12 col-sm-4">
-								<div class="text-muted custom-spacing">{{createdTicket?.ticketCreateTimestamp | date:'medium' }}</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+<div class="accordion" id="createNewTicket">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+            <button id="buttonCreateTicket" #buttonCreateTicket class="accordion-button" type="button"
+                data-bs-toggle="collapse" data-bs-target="#collapseCreateTicket" aria-expanded="true"
+                aria-controls="collapseOne">
+                Create New Ticket
+            </button>
+        </h2>
+        <div id="collapseCreateTicket" #collapseCreateTicket class="accordion-collapse collapse show"
+            aria-labelledby="headingOne" data-bs-parent="#createNewTicket">
+            <div class="accordion-body">
+                <div class="ticket-container m-2 d-flex justify-content-center align-items-center">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-4 col-md-9 col-sm-12 mb-3">
+                                <div
+                                    class="form service-textbox form-control-sm shadow-lg p-3 rounded text-center h-100">
+                                    <h2 class="text-light" title="heading" tabindex="0">Welcome to Service App!</h2>
+                                    <p class="text-light text-justify" tabindex="0">
+                                        Welcome to the Service App! This platform simplifies the process of creating and
+                                        managing
+                                        service tickets. Whether you need technical support, maintenance services, or
+                                        any other
+                                        assistance, our user-friendly interface ensures a seamless experience. Simply
+                                        select the type of
+                                        service you require, provide a brief description, and submit your request. Our
+                                        dedicated team will promptly
+                                        address your needs, ensuring efficient and effective resolutions. Thank you for
+                                        choosing
+                                        our service - we are here to help you.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-lg-8 col-md-9 col-sm-12">
+                                <form class="form form-control-sm shadow-lg p-3 rounded"
+                                    aria-label="Create Ticket Form">
+                                    <h2 class="text-success d-flex justify-content-center align-items-center"
+                                        title="heading" tabindex="0">Create
+                                        Ticket</h2>
+                                    <div class="row mb-2">
+                                        <div class="col-12">
+                                            <span class="fw-bold text-danger">* </span>
+                                            <label class="form-label fw-bold" for="service_type" tabindex="0">Service
+                                                type</label>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-outline">
+                                                <select id="serviceTypes" class="form-select" name="serviceTypes"
+                                                    [(ngModel)]="serviceType" aria-label="Select a service type"
+                                                    aria-required="true" tabindex="0" [ngClass]="{'red-border-class': errorMap.has('ticketTypeMessage')
+                                                    && !isFormSubmitted}" required>
+                                                    <option disabled selected value="">Select service types</option>
+                                                    <option *ngFor="let service of serviceTypes"
+                                                        [value]="service.ticketTypeId" tabindex="0">
+                                                        {{ service.ticketType }}
+                                                    </option>
+                                                </select>
+                                                <div *ngIf="errorMap.has('ticketTypeMessage') && !isFormSubmitted"
+                                                    id="errorMessage" class="font-weight-bold text-danger" tabindex="0">
+                                                    {{errorMap.get('ticketTypeMessage')}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-12">
+                                            <span class="fw-bold text-danger">* </span>
+                                            <label class="form-label fw-bold" for="description"
+                                                tabindex="0">Description</label>
+                                        </div>
+                                        <div class="col-12">
+                                            <textarea class="form-control" id="description" rows="5" name="description"
+                                                tabindex="0"
+                                                aria-label="Click to enter a description of service you require"
+                                                aria-required="true" [(ngModel)]="serviceDesc" [ngClass]="{'red-border-class': errorMap.has('serviceDescMessage')
+                                                && !isFormSubmitted}" required></textarea>
+                                            <div *ngIf="errorMap.has('serviceDescMessage') && !isFormSubmitted"
+                                                id="errorMessage" class="font-weight-bold text-danger" tabindex="0">
+                                                {{errorMap.get('serviceDescMessage')}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-column align-items-end mb-2">
+                                        <button type="button" class="btn btn-success btn-sm px-2 mt-3"
+                                            id="createTicketBtn" tabindex="0" title="Create"
+                                            aria-label="Create Ticket button" role="button" (click)="createTicket()"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseExample"
+                                            aria-expanded="false">Create
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingTwo" *ngIf="isFormSubmitted">
+            <button id="buttonTicketReq" #buttonTicketReq class="accordion-button" type="button"
+                data-bs-toggle="collapse" data-bs-target="#ticketRequests" aria-expanded="false"
+                aria-controls="collapseTwo" [ngClass]="{'collapsed': !isFormSubmitted, 'expanded': isFormSubmitted}">
+                Ticket Requests
+            </button>
+        </h2>
+        <div id="ticketRequests" #ticketRequests class="accordion-collapse collapse" aria-labelledby="headingTwo"
+            data-bs-parent="#createNewTicket">
+            <div class="accordion-body" *ngIf="isFormSubmitted && isRefreshed">
+                <app-ticket-request></app-ticket-request>
+            </div>
+        </div>
+    </div>
 </div>

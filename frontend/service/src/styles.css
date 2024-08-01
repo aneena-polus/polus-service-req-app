@@ -9,19 +9,33 @@ body {
 	font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.my-custom-snackbar {
-  margin: 0 !important;
-  position: fixed;
-  top: 60px;
-  left: 40%;
-  z-index: 10000;
+.custom-dialog-container .mat-dialog-container {
+    width: auto;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 100vh !important;
 }
 
-.custom-dialog-container .mat-dialog-container {
-  width: auto ;
-  height: auto !important;
-  max-width: 100% !important;
-  max-height: 100vh !important;
+.my-custom-snackbar-login {
+    background: #006241 !important;
+    margin: 0 !important;
+    color: white !important;
+    position: fixed;
+    top: 70px;
+    left: 40%;
+    z-index: 10000;
+}
+
+.my-custom-snackbar-login.mat-mdc-snack-bar-container {
+    .mdc-snackbar__surface {
+      background: #006241;
+    }
+}
+
+.my-custom-snackbar.mat-mdc-snack-bar-container {
+    .mdc-snackbar__surface {
+      background: #006241;
+    }
 }
 
 .custom-spacing { margin-top: -8px; }
@@ -29,6 +43,6 @@ body {
 .custom-rounded-border { border-radius: 25px; }
 
 .status-icon {
-  width: 13px;
-  height: 13px;
+    width: 13px;
+    height: 13px;
 }

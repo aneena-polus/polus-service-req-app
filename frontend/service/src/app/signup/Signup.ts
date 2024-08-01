@@ -1,4 +1,5 @@
 export interface Signup {
+    employeeId?: number;
     firstname: string;
     lastname: string;
     email: string;

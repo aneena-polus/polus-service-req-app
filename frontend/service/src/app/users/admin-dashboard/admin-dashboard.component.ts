@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DataService } from '../../data.service';
-import { GetAssignedTickets } from '../create-ticket/ServiceType';
+import { GetAssignedTickets, TicketCount } from '../create-ticket/ServiceType';
 import { DatePipe } from '@angular/common';
 import { StatuschangeComponent } from '../statuschange/statuschange.component';
 import { UsertoadminComponent } from '../usertoadmin/usertoadmin.component';
@@ -21,7 +21,7 @@ export class AdminDashboardComponent {
     ticketRequests: GetAssignedTickets[] = [];
     filteredTicketRequests: GetAssignedTickets[] = [];
     selectedTicket: GetAssignedTickets | null = null ;
-    ticketCount: number = 0;
+    ticketCount: number | undefined;
     currentPage: number = 0;
     filterWord: string = '';
     showFirstLastButtons = true;
@@ -33,6 +33,7 @@ export class AdminDashboardComponent {
 
     ngOnInit(): void {
         this.assignedToMe( 'assigned to me' );
+        this.fetchTicketCount();
     }
 
     public assignedToMe( admin: string ): void {
@@ -41,7 +42,6 @@ export class AdminDashboardComponent {
             next: ( ticketRequests: GetAssignedTickets[] ) => {
                 this.ticketRequests = ticketRequests;
                 this.filteredTicketRequests = ticketRequests;
-                this.ticketCount = this.ticketRequests[0].count;
             },
             error: (error) => {
               console.error('Error fetching ticket requests:', error);
@@ -59,6 +59,7 @@ export class AdminDashboardComponent {
         filterValue = filterValue.toLowerCase();
         this.filteredTicketRequests = this.ticketRequests.filter(ticketRequest => {
         const serviceType = ticketRequest.ticketType.ticketType.toLowerCase();
+        const createdBy = ticketRequest.createBy.toLowerCase();
         const description = ticketRequest.ticketDescription.toLowerCase();
         const createdDate = this._datePipe.transform(ticketRequest.ticketCreateTimestamp, 'MMM d, y, h:mm:ss a')?.toLowerCase() || '';
         const editedDate = this._datePipe.transform(ticketRequest.ticketUpdateTimestamp, 'MMM d, y, h:mm:ss a')?.toLowerCase() || '';
@@ -67,6 +68,7 @@ export class AdminDashboardComponent {
             description.includes(filterValue) ||
             createdDate?.includes(filterValue) ||
             editedDate?.includes(filterValue) ||
+            createdBy?.includes(filterValue) ||
             comments.includes(filterValue);
         });
     }
@@ -75,7 +77,10 @@ export class AdminDashboardComponent {
     	let dialogRef= this._dialogref.open( StatuschangeComponent, {
 			width: '700px',
 			panelClass: 'custom-dialog-container',
-			data: { ticketRequests: ticketRequest, statusId: 3 }
+			data: {
+                    ticketRequests: ticketRequest,
+                    statusId: 3
+                }
         });
         dialogRef.afterClosed().subscribe(() => {
             this.assignedToMe('assigned to me');
@@ -86,21 +91,33 @@ export class AdminDashboardComponent {
     	let dialogRef= this._dialogref.open(StatuschangeComponent, {
             width: '700px',
             panelClass: 'custom-dialog-container',
-            data: { ticketRequests: ticketRequest, statusId: 4 }
+            data: {
+                    ticketRequests: ticketRequest,
+                    statusId: 4
+                }
         });
         dialogRef.afterClosed().subscribe(() => {
             this.assignedToMe('assigned to me');
         });
     }
 
-    public assignedToAll( admin: string ): void {
-        this.activeStatus = admin;
+    public fetchTicketCount(): void {
+        this._data_service.fetchTicketCount().subscribe({
+            next: ( response: TicketCount ) => {
+                this.ticketCount = response.AssignedToMeCount;
+            },
+            error: (error) => {
+                console.error('Error fetching ticket requests:', error);
+            },
+        });
     }
 
-    public userToAdmin( admin: string ): void {
+    public roleChange( admin: string ): void {
         this.activeStatus = admin;
         let dialogRef= this._dialogref.open( UsertoadminComponent, {
-			width: '700px',
+			width: '1000px',
+            maxWidth: '100%',
+            minWidth: '50%',
 			panelClass: 'custom-dialog-container',
         });
 		dialogRef.afterClosed().subscribe(() => {
@@ -119,7 +136,7 @@ export class AdminDashboardComponent {
         });
     }
 
-    public showTicket( ticketRequest: GetAssignedTickets ): void {
+    public viewMoreTicket( ticketRequest: GetAssignedTickets ): void {
       this.selectedTicket = ticketRequest;
     }
 }

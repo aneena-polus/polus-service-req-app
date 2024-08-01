@@ -8,8 +8,14 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class ConfirmDialogComponent {
 
+    ticketDesc: string = '';
+
   	constructor( public _dialogRef: MatDialogRef<ConfirmDialogComponent>,
-       			 @Inject(MAT_DIALOG_DATA) public data: any ) {}
+       			 @Inject(MAT_DIALOG_DATA) public data: {ticketId: number, ticketDesc: string} ) {}
+
+    ngOnInit(): void {
+        this.ticketDesc = this.data.ticketDesc;
+    }
 
     public onConfirm(): void {
         this._dialogRef.close('confirm');

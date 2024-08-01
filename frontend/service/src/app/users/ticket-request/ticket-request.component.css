@@ -5,8 +5,8 @@
 ::ng-deep .custom-badge .mat-badge-content { background-color: #4caf50; }
 
 .no-data-icon img {
-  width: 100px;
-  height: auto;
+    width: 100px;
+    height: auto;
 }
 
 .btn-hover:hover { background-color: #e2f3e6; }

@@ -5,19 +5,23 @@
                 <form class="form form-control-sm shadow-lg p-4 mb-5 rounded login-form" aria-label="Login Form">
                     <h1 class="row justify-content-center" aria-label="Login" tabindex="0">Log In</h1>
                     <div class="form-outline mb-4">
+                        <span class="fw-bold text-danger">* </span>
                         <label class="form-label" for="login_user_id">Username</label>
                         <input type="text" [(ngModel)]="username" id="login_user_id"
                             [ngClass]="{'red-border-class': errorMessage && username === ''}"
                             class="form-control input-sm field-border" name="userid" tabindex="0"
-                            aria-label="Click to enter your user name" aria-required="true" required />
+                            aria-label="Click to enter your user name" aria-required="true"
+                            placeholder="Enter your username" required />
                     </div>
                     <div class="form-outline mb-4">
+                        <span class="fw-bold text-danger">* </span>
                         <label class="form-label" for="login_password">Password</label>
                         <div class="input-group">
                             <input [type]="passwordFieldType" [(ngModel)]="password" id="login_password"
                                 class="form-control" name="login_password" tabindex="0"
                                 [ngClass]="{'red-border-class': errorMessage && password === ''}"
-                                aria-label="Click to enter your password" aria-required="true" required />
+                                aria-label="Click to enter your password" aria-required="true"
+                                placeholder="Enter your password" required />
                             <div class="input-group-append">
                                 <button class="btn btn-outline-light rounded-0" type="button" id="togglePassword"
                                     (click)="togglePasswordVisibility()" tabindex="0"
@@ -39,8 +43,8 @@
                         </button>
                         <div class="pt-2">
                             Are you a new user?
-                            <a class="link-light fw-bold text-color" id="go-to-signup" routerLink="/signup"
-                                tabindex="0" aria-label="Click to sign up">Click Here
+                            <a class="link-light fw-bold text-color" id="go-to-signup" routerLink="/signup" tabindex="0"
+                                aria-label="Click to sign up">Click Here
                             </a>
                         </div>
                     </div>

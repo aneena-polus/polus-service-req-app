@@ -3,7 +3,8 @@ import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { ServiceType, CreateTicket, GetTicketRequest, EditTicketRequest, UserToAdmin, MakeAdmin,
         AdminList, AssignAdmin, GetAssignedTickets, PerformAction, ShowTicket, Response,
-		CreateServiceType, TicketCount} from './users/create-ticket/ServiceType';
+		CreateServiceType, TicketCount, SignUpResponse,
+        EditResponse} from './users/create-ticket/ServiceType';
 import { Login } from './login/Login';
 import { Signup, Country } from './signup/Signup';
 
@@ -14,6 +15,7 @@ import { Signup, Country } from './signup/Signup';
 export class DataService {
 
 	loggedInUser: Login = {} as Login;
+	signedUpUser: SignUpResponse = {} as SignUpResponse;
 
 	constructor( private http: HttpClient ) {}
 
@@ -21,8 +23,16 @@ export class DataService {
 		return this.http.post<Login>('/api/login', post);
 	};
 
-	signup(post: Signup): Observable<string> {
-		return this.http.post('/api/signup', post, { responseType: 'text' });
+	signup(post: Signup): Observable<SignUpResponse> {
+		return this.http.post<SignUpResponse>('/api/signup', post);
+	};
+
+	editDetails(post: Signup): Observable<EditResponse> {
+		return this.http.post<EditResponse>('/api/signup', post);
+	};
+
+	editUserDetails(post: Signup): Observable<Signup> {
+		return this.http.post<Signup>('/api/signup', post);
 	};
 
 	getCountries(): Observable<Country[]> {
@@ -37,11 +47,22 @@ export class DataService {
 		return this.http.post<ShowTicket>('/api/createticket', post);
 	};
 
+	getSignedUpUser(): SignUpResponse {
+		return this.signedUpUser;
+	};
+
+	setSignedUpUser(user: SignUpResponse): void {
+		this.signedUpUser = user;
+	};
+
 	setLoggedInUser(user: Login): void {
 		this.loggedInUser = user;
+        localStorage.setItem('loggedInUser',JSON.stringify(this.loggedInUser));
 	};
 
 	getLoggedInUser(): Login {
+        const USER = localStorage.getItem('loggedInUser');
+        USER? this.loggedInUser = JSON.parse(USER) as Login : null;
 		return this.loggedInUser;
 	};
 
@@ -89,8 +110,7 @@ export class DataService {
 		return this.http.get(`/api/setrole/${post.employeeId}/${post.roleId}`, { responseType: 'text' });
 	};
 
-	showTicket(id: number): Observable<ShowTicket[]> {
-		return this.http.get<ShowTicket[]>(`/api/getticket/${id}`);
+	revokeRole(post: MakeAdmin): Observable<Response> {
+		return this.http.delete<Response>(`/api/deleterole/${post.adminId}/${post.employeeId}/${post.roleId}`);
 	};
-
 }

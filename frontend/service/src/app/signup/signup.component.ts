@@ -7,6 +7,7 @@ import { NgClass } from '@angular/common';
 import { DataService } from '../data.service';
 import { CommonModule } from '@angular/common';
 import { Country, Signup } from './Signup';
+import { SignUpResponse } from '../users/create-ticket/ServiceType';
 
 @Component({
     selector: 'app-signup',
@@ -26,7 +27,7 @@ export class SignupComponent {
     firstname: string = '';
     lastname: string = '';
     email: string = '';
-    phoneNumber: number = 0;
+    phoneNumber?: number;
     designation: string = '';
     state: string = '';
     country: string = '';
@@ -35,16 +36,16 @@ export class SignupComponent {
     isResponseSent: boolean = true;
     alreadyExistErrorMessage: string | null = null;
 
-	constructor(private _DATA_SERVICE: DataService,
-				private _ROUTER: Router,
-        		private _SNACKBAR: MatSnackBar) { }
+	constructor( private _DATA_SERVICE: DataService,
+				 private _ROUTER: Router,
+        		 private _SNACKBAR: MatSnackBar ) { }
 
 	ngOnInit(): void {
 		this.getCountries();
 	}
 
 	public signup(): void {
-		this.isResponseSent=true;
+		this.isResponseSent = true;
 		this.errorMap.clear();
 		const signupRO: Signup = {
 			firstname: this.firstname,
@@ -53,7 +54,7 @@ export class SignupComponent {
 			designation: this.designation,
 			state: this.state,
 			countryCode: this.country,
-			phoneNumber: this.phoneNumber,
+			phoneNumber: this.phoneNumber? this.phoneNumber:0,
 			username: this.username,
 			password: this.password
 		};
@@ -63,21 +64,17 @@ export class SignupComponent {
 		!this.firstname ? this.displayErrorMessage('firstNameErrorMessage', 'Please enter a valid first name.') : null;
 		!this.lastname ? this.displayErrorMessage('lastNameErrorMessage', 'Please enter a valid last name.') : null;
 		!this.isValidEmail(this.email) ? this.displayErrorMessage('emailErrorMessage', 'Please enter a valid email.[eg:user@gmail.com]') : null;
-		!this.isValidPhoneNumber(this.phoneNumber) ? this.displayErrorMessage('phoneErrorMessage', 'Please enter a valid phone number[10 digits]') : null;
+		!this.isValidPhoneNumber(this.phoneNumber?this.phoneNumber:0) ? this.displayErrorMessage('phoneErrorMessage', 'Please enter a valid phone number[10 digits]') : null;
 		!this.designation ? this.displayErrorMessage('designationErrorMessage', 'Please enter a valid designation.'): null;
 		!this.state ? this.displayErrorMessage('stateErrorMessage', 'Please enter a valid state name.') : null;
 		!this.country ? this.displayErrorMessage('countryErrorMessage', 'Please select a valid country name.') : null;
 
-		if (this.isResponseSent) {
+		if ( this.isResponseSent ) {
 			this._DATA_SERVICE.signup(signupRO).subscribe({
-				next: (response: string) => {
-                    if(response) {
-                        this._ROUTER.navigate(['/login']);
-                        this.openSignUpMessage();
-                    }
-                    else {
-                         console.log('No response received');
-                    }
+				next: (response: SignUpResponse) => {
+                    this._ROUTER.navigate(['/login']);
+                    this._DATA_SERVICE.setSignedUpUser(response);
+                    this.openSignUpMessage();
 				},
 				error: (error) => {
 					console.error(error);
@@ -89,7 +86,7 @@ export class SignupComponent {
 
 	private displayErrorMessage(key:string, value:string): void {
 		this.errorMap.set(key, value);
-		this.isResponseSent=false;
+		this.isResponseSent = false;
 	}
 
     private isValidEmail(email: string): boolean {
@@ -104,18 +101,19 @@ export class SignupComponent {
 
     private isValidPhoneNumber(phoneNumber: number): boolean {
         const phoneNumberPattern = /^[1-9]\d{9}$/;
-        return phoneNumberPattern.test(phoneNumber.toString());
+        return phoneNumberPattern.test( phoneNumber.toString() );
     }
 
     public getCountries(): void {
-      this._DATA_SERVICE.getCountries().subscribe((data: Country[]) => {
-        this.countries = data.sort((a, b) => a.countryName.localeCompare(b.countryName));
-      });
+        this._DATA_SERVICE.getCountries().subscribe((data: Country[]) => {
+            this.countries = data.sort((a, b) => a.countryName.localeCompare(b.countryName));
+        });
     }
 
 	private openSignUpMessage(): void {
 		this._SNACKBAR.open(`Sign Up Successful. Please Login.`, undefined, {
 			duration: 2000,
+            panelClass: 'my-custom-snackbar'
 		});
 	}
 

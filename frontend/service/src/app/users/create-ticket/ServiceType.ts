@@ -6,6 +6,27 @@ export interface ServiceType {
 	ticketTypeCreatedBy: number;
 };
 
+export interface SignUpResponse {
+    Message: string;
+    Username: string;
+    Password: string;
+}
+
+export interface EditResponse {
+    employeeId: number;
+    username: string;
+    password: string;
+    firstname: string;
+    lastname: string;
+    email: string;
+    designation: string;
+    roles:null;
+    state: string;
+    countryCode: Country;
+    phoneNumber: number;
+    createdDate: null;
+}
+
 export interface Login {
 	employeeId?: number;
 	firstname?: string;
@@ -41,6 +62,9 @@ export interface CreateTicket {
 	ticketType: number;
 	ticketCreateBy?: number;
 	ticketDescription: string;
+    ticketId:null,
+    adminId:null,
+    statusId:1
 };
 
 export interface GetTicketRequest {
@@ -48,11 +72,11 @@ export interface GetTicketRequest {
 	ticketType: TicketTypes;
 	ticketDescription: string;
 	ticketCreateTimestamp: Date;
-  ticketUpdateTimestamp?: Date;
-  ticketStatus?: number;
-  assignedTo?: AdminList;
-  createBy: null;
-  comment?: Comment[];
+    ticketUpdateTimestamp?: Date;
+    ticketStatus?: number;
+    assignedTo?: AdminList;
+    createBy: null;
+    comment?: Comment[];
 };
 
 export interface TicketTypes {
@@ -67,7 +91,7 @@ export interface AdminList {
 	employeeId: number;
 	firstName: string;
 	lastName: string;
-  roles: Role[];
+    roles: Role[];
 };
 
 export interface EditTicketRequest {
@@ -75,6 +99,9 @@ export interface EditTicketRequest {
     ticketType: number;
     ticketDescription: string;
     ticketCreateBy: number;
+    employeeid: null,
+    adminId: null;
+    statusId: number;
 };
 
 export interface AssignAdmin {
@@ -82,7 +109,9 @@ export interface AssignAdmin {
   	ticketType :null,
     ticketDescription: null,
     ticketCreateBy: null,
+    employeeid: null,
     adminId: number;
+    statusId: null;
 };
 
 export interface GetAssignedTickets {
@@ -110,11 +139,11 @@ export interface ShowTicket {
 	ticketType: TicketTypes;
 	ticketDescription: string;
 	ticketCreateTimestamp: Date;
-  ticketUpdateTimestamp?: Date;
-  ticketStatus?: number;
-  assignedTo?: AdminList;
-  createBy?: string;
-  comment?: Comment;
+    ticketUpdateTimestamp?: Date;
+    ticketStatus?: number;
+    assignedTo?: AdminList;
+    createBy?: string;
+    comment?: Comment;
 };
 
 export interface UserToAdmin {
@@ -122,9 +151,11 @@ export interface UserToAdmin {
     firstName: string;
     lastName: string;
     roles: Role[];
+    selected?: boolean;
 };
 
 export interface MakeAdmin {
+    adminId?: number;
     employeeId: number;
     roleId: number;
 };
@@ -136,7 +167,7 @@ export interface CreateServiceType {
 };
 
 export interface Response {
-  [key: string]: any;
+    [key: string]: any;
 };
 
 export interface TicketCount {
@@ -144,11 +175,12 @@ export interface TicketCount {
     AssignedCount: number;
     ApprovedCount: number;
     RejectedCount: number;
-}
+    AssignedToMeCount?: number;
+};
 
 export interface Comment {
     commentId: number;
     comment: string;
     createBy: string;
     timestamp: Date;
-}
+};

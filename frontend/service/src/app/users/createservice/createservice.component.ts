@@ -6,9 +6,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AdminDashboardComponent } from '../admin-dashboard/admin-dashboard.component';
 
 @Component({
-  selector: 'app-createservice',
-  templateUrl: './createservice.component.html',
-  styleUrl: './createservice.component.css'
+    selector: 'app-createservice',
+    templateUrl: './createservice.component.html',
+    styleUrl: './createservice.component.css'
 })
 
 export class CreateserviceComponent {
@@ -19,8 +19,8 @@ export class CreateserviceComponent {
     loggedInUser: Login = {} as Login;
 
     constructor ( private _data_service: DataService,
-                    private _dialogRef : MatDialogRef<AdminDashboardComponent>,
-                    private _snackbar: MatSnackBar ) {}
+                  private _dialogRef : MatDialogRef<AdminDashboardComponent>,
+                  private _snackbar: MatSnackBar ) {}
 
     ngOnInit(): void {
         this.loggedInUser = this._data_service.getLoggedInUser();
@@ -46,7 +46,8 @@ export class CreateserviceComponent {
 
     private openCreateTicketMessage(): void {
         this._snackbar.open(`Service type created successfully.`, undefined, {
-            duration: 2000
+            duration: 2000,
+            panelClass: 'my-custom-snackbar'
         });
     }
 
