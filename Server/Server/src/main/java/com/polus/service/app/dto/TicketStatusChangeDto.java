@@ -11,4 +11,5 @@ public class TicketStatusChangeDto {
 	private Integer ticketId;
 	private Integer statusId;
 	private String comments;
+	//private Integer employeeId;
 }

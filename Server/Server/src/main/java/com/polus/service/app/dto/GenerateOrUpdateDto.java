@@ -10,7 +10,7 @@ public class GenerateOrUpdateDto {
 	private Integer ticketId;
 	private Integer ticketType;
 	private String ticketDescription;
-	private Integer ticketCreateBy;
-	private Integer employeeid;
 	private Integer adminId; 
+	private Integer ticketCreateBy;
+	private Integer statusId;
 }

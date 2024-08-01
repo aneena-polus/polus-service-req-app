@@ -28,6 +28,7 @@ import com.polus.service.app.repository.EmployeeRepository;
 import com.polus.service.app.repository.TicketCommentRepository;
 import com.polus.service.app.repository.TicketHistoryRepository;
 import com.polus.service.app.repository.TicketRepository;
+import com.polus.service.app.repository.TicketDaoImpl;
 import com.polus.service.app.repository.TicketStatusRepository;
 import com.polus.service.app.repository.TicketTypeRepository;
 
@@ -54,12 +55,14 @@ public class TicketService {
 	@Autowired
 	TicketCommentRepository ticketCommentRepository;
 
-	public Object generateOrUpdateTicket(GenerateOrUpdateDto generateTicket) {
+	@Autowired
+	TicketDaoImpl imple;
+
+	public Object generateOrUpdateTicket(GenerateOrUpdateDto generateTicket) throws Exception {
 		Map<String, String> message = new HashMap<>();
-		Ticket ticket = new Ticket();
-		TicketStatus status = ticketStatusRepository.findById(Constants.INPROGRESS_STATUS_ID)
-				.orElseThrow(() -> new RuntimeException("Status not found"));
 		try {
+			TicketStatus status = ticketStatusRepository.findById(generateTicket.getStatusId())
+					.orElseThrow(() -> new Exception("Status not found"));
 			Optional<TicketType> ticketType = ticketTypeRepository.findById(generateTicket.getTicketType());
 			Optional<Employee> employee = employeeRepository.findById(generateTicket.getTicketCreateBy());
 			if (generateTicket.getTicketId() != null) {
@@ -70,20 +73,21 @@ public class TicketService {
 				message.put("Message", "Ticket updated successfully");
 				return message;
 			} else {
+				Ticket ticket = new Ticket();
 				saveOrUpdateTicket(ticket, ticketType, generateTicket, employee, status);
 				TicketResponseDto response = new TicketResponseDto(); // Ticket Response
+				saveInHistoryTable(ticket, employee); // Save ticket in history table
 				response.setId(ticket.getTicketId());
 				response.setTicketType(ticket.getTicketType());
 				response.setTicketDescription(ticket.getTicketDescription());
 				response.setCreateBy(ticket.getTicketCreateBy().getFullname());
 				response.setTicketStatus(ticket.getTicketStatusId().getStatusId());
 				response.setTicketCreateTimestamp(ticket.getTicketCreateTimestamp());
-				saveInHistoryTable(ticket, employee); // Save ticket in history table
 				return response;
 			}
 		} catch (Exception e) {
 			logger.info("Error in generating or updating ticket: {}", e.getMessage());
-			message.put("Message", "Failed");
+			message.put("Message", "Request failed");
 			return message;
 		}
 	}
@@ -92,7 +96,7 @@ public class TicketService {
 			Integer pageSize) {
 		Integer offset = pageNumber * pageSize;
 		List<TicketResponseDto> response = new ArrayList<>();
-		Employee adminList = new Employee();
+		Employee admin = new Employee();
 		if (statusId != null) {
 			List<Ticket> tickets = ticketRepository.findByEmployeeIdWithTickets(employeeId, statusId, pageSize, offset);
 			for (Ticket ticket : tickets) {
@@ -104,13 +108,13 @@ public class TicketService {
 				responseDto.setTicketUpdateTimestamp(ticket.getTicketUpdateTimestamp());
 				responseDto.setTicketStatus(ticket.getTicketStatusId().getStatusId());
 				if (Constants.INPROGRESS_STATUS_ID != statusId) {
-					adminList = employeeRepository.findById(ticket.getTicketAssignedTo().getEmployeeId())
+					admin = employeeRepository.findById(ticket.getTicketAssignedTo().getEmployeeId())
 							.orElseThrow(() -> new RuntimeException("Admin not found"));
-					AdminDto list = new AdminDto();
-					list.setRole_id(adminList.getEmployeeId());
-					list.setFirstName(adminList.getFirstname());
-					list.setLastName(adminList.getLastname());
-					responseDto.setAssignedTo(list);
+					AdminDto adminDto = new AdminDto();
+					adminDto.setRole_id(admin.getEmployeeId());
+					adminDto.setFirstName(admin.getFirstname());
+					adminDto.setLastName(admin.getLastname());
+					responseDto.setAssignedTo(adminDto);
 					if (Constants.ASSIGNED_STATUS_ID != statusId) {
 						List<TicketComment> ticketComment = ticketCommentRepository
 								.findByTicketId(ticket.getTicketId());
@@ -132,13 +136,14 @@ public class TicketService {
 			return false;
 	}
 
-	public boolean assignAdminToTicket(GenerateOrUpdateDto generateTicketDto) {
+	public boolean setStatustoAssigned(GenerateOrUpdateDto generateTicketDto) {
 		if (ticketRepository.existsById(generateTicketDto.getTicketId())) {
 			Ticket ticket = ticketRepository.findById(generateTicketDto.getTicketId())
 					.orElseThrow(() -> new RuntimeException("Ticket not found."));
 			Employee admin = employeeRepository.findById(generateTicketDto.getAdminId())
 					.orElseThrow(() -> new RuntimeException("Employee not found."));
-			TicketStatus status = ticketStatusRepository.findById(Constants.ASSIGNED_STATUS_ID).orElseThrow();
+			TicketStatus status = ticketStatusRepository.findById(Constants.ASSIGNED_STATUS_ID)
+					.orElseThrow(() -> new RuntimeException("Status not found."));
 			ticket.setTicketAssignedTo(admin);
 			ticket.setTicketStatusId(status);
 			ticket.setTicketUpdateTimestamp(Timestamp.from(Instant.now()));
@@ -184,24 +189,23 @@ public class TicketService {
 			Ticket ticket = ticketRepository.findById(statusChangeDto.getTicketId())
 					.orElseThrow(() -> new RuntimeException("Ticket not found."));
 			if (statusChangeDto.getStatusId().equals(Constants.APPROVED_STATUS_ID)) {
-				TicketStatus status = ticketStatusRepository.findById(Constants.APPROVED_STATUS_ID).orElseThrow();
-				ticket.setTicketStatusId(status);
+				ticket.setTicketStatusId(ticketStatusRepository.findById(Constants.APPROVED_STATUS_ID).orElseThrow());
 				ticketRepository.save(ticket);
 				message.put("Message", "Ticket approved successfully");
 			}
 			if (statusChangeDto.getStatusId().equals(Constants.REJECTED_STATUS_ID)) {
-				TicketStatus status = ticketStatusRepository.findById(Constants.REJECTED_STATUS_ID).orElseThrow();
-				ticket.setTicketStatusId(status);
+				ticket.setTicketStatusId(ticketStatusRepository.findById(Constants.REJECTED_STATUS_ID).orElseThrow());
 				ticketRepository.save(ticket);
 				message.put("Message", "Ticket rejected successfully");
 			}
-			if (statusChangeDto.getComments() != null) {
+			if (!statusChangeDto.getComments().isBlank()) {
 				TicketComment comment = new TicketComment();
 				comment.setTicketId(ticket);
 				comment.setTicketComment(statusChangeDto.getComments());
 				comment.setCreateBy(admin);
 				comment.setCreateTimestamp(Timestamp.from(Instant.now()));
 				ticketCommentRepository.save(comment);
+				saveInHistoryTable(ticket, employeeRepository.findById(statusChangeDto.getAdminId()));
 			}
 			return message;
 		} catch (Exception e) {
@@ -222,6 +226,7 @@ public class TicketService {
 					ticketRepository.countByEmployeeIdAndStatusId(employeeId, Constants.APPROVED_STATUS_ID));
 			ticketCount.put("RejectedCount",
 					ticketRepository.countByEmployeeIdAndStatusId(employeeId, Constants.REJECTED_STATUS_ID));
+			ticketCount.put("AssignedToMeCount", ticketRepository.countOfTicketByAdminId(employeeId));
 			return ticketCount;
 		} catch (Exception e) {
 			logger.error("Error in getting tickets count: {}", e.getMessage());
@@ -256,7 +261,7 @@ public class TicketService {
 		ticket.setTicketType(ticketType.get());
 		ticket.setTicketDescription(generateTicket.getTicketDescription());
 		ticket.setTicketCreateBy(employee.get());
-		if(!ticketRepository.existsById(ticket.getTicketId()))
+		if (!ticketRepository.existsById(ticket.getTicketId()))
 			ticket.setTicketCreateTimestamp(Timestamp.from(Instant.now()));
 		ticket.setTicketUpdateTimestamp(Timestamp.from(Instant.now()));
 		ticket.setTicketStatusId(status);

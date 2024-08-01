@@ -2,6 +2,7 @@ package com.polus.service.app.controllers;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.polus.service.app.dto.LoginRequest;
 import com.polus.service.app.dto.LoginResponse;
-import com.polus.service.app.dto.SignUpRequest;
+import com.polus.service.app.dto.SignUpOrUpdateDto;
 import com.polus.service.app.exceptions.UsernameAlreadyExistsException;
 import com.polus.service.app.repository.EmployeeRepository;
 import com.polus.service.app.services.EmployeeService;
@@ -26,9 +28,9 @@ import com.polus.service.app.services.EmployeeService;
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/auth")
-public class AuthenticationController {
+public class EmployeeController {
 
-	private Logger logger = LogManager.getLogger(AuthenticationController.class);
+	private Logger logger = LogManager.getLogger(EmployeeController.class);
 
 	@Autowired
 	private EmployeeService authService;
@@ -36,16 +38,16 @@ public class AuthenticationController {
 	@Autowired
 	EmployeeRepository employee;
 
-	@PostMapping("/signup")
-	public Map<String, String> signUp(@RequestBody SignUpRequest signUpRequest) {
+	@PostMapping("/signupOredit")
+	public ResponseEntity<Object> signUpOrEdit(@RequestBody SignUpOrUpdateDto signUpRequest) {
 		logger.info("Request for a employee sign-up");
-		return authService.signUp(signUpRequest);
+		return authService.signUpOrEdit(signUpRequest);
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
 		logger.info("Request for employee login.");
-		LoginResponse loginResponse = authService.authenticate(loginRequest);
+		LoginResponse loginResponse = authService.login(loginRequest);
 		if (loginResponse == null) {
 			logger.info("Username or password is incorrect.");
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username or password is incorrect.");
@@ -80,7 +82,7 @@ public class AuthenticationController {
 	}
 
 	@DeleteMapping("/deleterole/{adminId}/{employeeId}/{roleId}")
-	public ResponseEntity<Map<String, String>> deleteRole(@PathVariable Integer adminId,
+	public ResponseEntity<Map<String, String>> revokeRole(@PathVariable Integer adminId,
 			@PathVariable Integer employeeId, @PathVariable Integer roleId) {
 		return ResponseEntity.status(HttpStatus.OK).body(authService.revokeRole(adminId, employeeId, roleId));
 	}
@@ -88,5 +90,12 @@ public class AuthenticationController {
 	@ExceptionHandler(UsernameAlreadyExistsException.class)
 	public ResponseEntity<String> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException exception) {
 		return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+
+	//Learning purpose
+	@GetMapping("/get")
+	public String getAll() {
+		String name = "Manesh";
+		return name;
 	}
 }

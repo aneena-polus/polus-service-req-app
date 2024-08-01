@@ -38,7 +38,7 @@ public class TicketController {
 	TicketTypeRepository ticketTypeRepository;
 
 	@PostMapping("/generateticket")
-	public ResponseEntity<Object> generateTicket(@RequestBody GenerateOrUpdateDto genearateTicket) {
+	public ResponseEntity<Object> generateTicket(@RequestBody GenerateOrUpdateDto genearateTicket) throws Exception {
 		logger.info("Request to generate or update a ticket.");
 		return ResponseEntity.ok(ticketService.generateOrUpdateTicket(genearateTicket));
 	}
@@ -63,7 +63,7 @@ public class TicketController {
 	public ResponseEntity<Map<String, String>> assignAdminToTicket(@RequestBody GenerateOrUpdateDto generateTicketDto) {
 		logger.info("Request to assign an admin to a ticket.");
 		Map<String, String> message = new HashMap<>();
-		if (ticketService.assignAdminToTicket(generateTicketDto)) {
+		if (ticketService.setStatustoAssigned(generateTicketDto)) {
 			logger.info("Admin assigned successfully.");
 			message.put("Message", "Admin assigned successfully.");
 			return ResponseEntity.ok(message);

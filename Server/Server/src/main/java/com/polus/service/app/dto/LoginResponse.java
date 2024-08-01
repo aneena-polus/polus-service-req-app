@@ -20,5 +20,6 @@ public class LoginResponse {
 	private Country countryCode;
 	private String phoneNumber;
 	private Date createdDate;
+	private String password;
 	private List<RoleDto> roles;
 }

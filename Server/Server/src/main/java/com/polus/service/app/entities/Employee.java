@@ -1,5 +1,9 @@
 package com.polus.service.app.entities;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,9 +16,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -63,6 +64,6 @@ public class Employee implements Serializable {
 	@Column(name = "full_name")
 	private String fullname;
 
-	@OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
 	private Set<EmployeeRole> employeeRoles;
 }

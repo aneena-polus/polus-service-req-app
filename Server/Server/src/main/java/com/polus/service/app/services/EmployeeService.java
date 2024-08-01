@@ -1,24 +1,28 @@
 package com.polus.service.app.services;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import com.polus.service.app.Constants;
 import com.polus.service.app.dto.EmployeeDto;
 import com.polus.service.app.dto.LoginRequest;
 import com.polus.service.app.dto.LoginResponse;
 import com.polus.service.app.dto.RoleDto;
-import com.polus.service.app.dto.SignUpRequest;
+import com.polus.service.app.dto.SignUpOrUpdateDto;
 import com.polus.service.app.entities.Country;
 import com.polus.service.app.entities.Employee;
 import com.polus.service.app.entities.EmployeeRole;
@@ -46,49 +50,61 @@ public class EmployeeService {
 	@Autowired
 	CountryRepository countryRespository;
 
-	public Map<String, String> signUp(SignUpRequest signUpRequest) {
+	public ResponseEntity<Object> signUpOrEdit(SignUpOrUpdateDto signUpOrUpdate) {
 		Map<String, String> message = new HashMap<>();
 		try {
-			if (employeeRepository.existsByUsername(signUpRequest.getUsername())) {
-				throw new UsernameAlreadyExistsException("Username already exists");
-			} else {
-				Employee employee = new Employee();
-				Optional<Country> country = countryRespository.findById(signUpRequest.getCountryCode());
-				employee.setFirstname(signUpRequest.getFirstname());
-				employee.setLastname(signUpRequest.getLastname());
-				employee.setFullname(signUpRequest.getFirstname() + " " + signUpRequest.getLastname());
-				employee.setEmail(signUpRequest.getEmail());
-				employee.setDesignation(signUpRequest.getDesignation());
-				employee.setState(signUpRequest.getState());
-				employee.setCountryCode(country.get());
-				employee.setPhoneNumber(signUpRequest.getPhoneNumber());
-				employee.setUsername(signUpRequest.getUsername());
-				employee.setPassword(signUpRequest.getPassword());
-				employee.setCreatedDate(new Date());
-				Employee saveEmployee = employeeRepository.save(employee);
-				assignDefaultRoleToEmployee(saveEmployee.getEmployeeId());
+			Employee employee = new Employee();
+			Optional<Country> country = countryRespository.findById(signUpOrUpdate.getCountryCode());
+			if (signUpOrUpdate.getEmployeeId() == null) {
+				if (employeeRepository.existsByUsername(signUpOrUpdate.getUsername())) {
+					throw new UsernameAlreadyExistsException("Username already exists");
+				}
+				employee.setCreatedDate(Timestamp.from(Instant.now()));
+				saveOrUpdateEmployee(employee, signUpOrUpdate, country);
+				employeeRepository.save(employee);
+				assignRole(employee.getEmployeeId(), Constants.PRINCIPAL_INVESTIGATOR_ID);
 				logger.info("User signup successfully");
 				message.put("Message", "User signup successfully");
-				return message;
+				message.put("Username", signUpOrUpdate.getUsername());
+				message.put("Password", signUpOrUpdate.getPassword());
+				return ResponseEntity.ok(message);
+			} else {
+				saveOrUpdateEmployee(employee, signUpOrUpdate, country);
+				employee.setEmployeeId(signUpOrUpdate.getEmployeeId());
+				employeeRepository.save(employee);
+				logger.info("User edit successfully");
+				message.put("Message", "User edit successfully");
+				LoginResponse editResponse = new LoginResponse();
+				editResponse.setEmployeeId(employee.getEmployeeId());
+				editResponse.setUsername(employee.getUsername());
+				editResponse.setFirstname(employee.getFirstname());
+				editResponse.setLastname(employee.getLastname());
+				editResponse.setEmail(employee.getEmail());
+				editResponse.setDesignation(employee.getDesignation());
+				editResponse.setState(employee.getState());
+				editResponse.setCountryCode(employee.getCountryCode());
+				editResponse.setPhoneNumber(employee.getPhoneNumber());
+				return ResponseEntity.ok(editResponse);
 			}
 		} catch (UsernameAlreadyExistsException e) {
 			logger.error("Username already exist: {}", e.getMessage());
 			message.put("Message", "Username already exists");
-			return message;
+			return ResponseEntity.ok(message);
 		} catch (Exception e) {
 			logger.error("Error in sign-up: {}", e.getMessage());
 			message.put("Message", "Failed");
-			return message;
+			return ResponseEntity.ok(message);
 		}
 	}
 
-	public LoginResponse authenticate(LoginRequest loginRequest) {
+	public LoginResponse login(LoginRequest loginRequest) {
 		try {
 			Employee employee = employeeRepository.findByUsername(loginRequest.getUsername());
 			if (employee != null && employee.getPassword().equals(loginRequest.getPassword())) {
 				LoginResponse loginResponse = new LoginResponse();
 				loginResponse.setEmployeeId(employee.getEmployeeId());
 				loginResponse.setUsername(employee.getUsername());
+				loginResponse.setPassword(employee.getPassword());
 				loginResponse.setFirstname(employee.getFirstname());
 				loginResponse.setLastname(employee.getLastname());
 				loginResponse.setEmail(employee.getEmail());
@@ -107,16 +123,14 @@ public class EmployeeService {
 		return null;
 	}
 
-	public boolean assignRole(int id, int roleId) {
+	public boolean assignRole(int employeeId, int roleId) {
 		try {
-			Employee employee = employeeRepository.findById(id)
+			Employee employee = employeeRepository.findById(employeeId)
 					.orElseThrow(() -> new RuntimeException("Employee not found"));
+			Role role = roleRepository.findById(roleId).orElseThrow(() -> new RuntimeException("Role not found"));
 			EmployeeRole employeeRole = new EmployeeRole();
 			employeeRole.setEmployee(employee);
-			if (roleId == Constants.APPLICATION_ADMINISTRATOR_ID) {
-				Role role = roleRepository.findById(Constants.APPLICATION_ADMINISTRATOR_ID).orElseThrow();
-				employeeRole.setRole(role);
-			}
+			employeeRole.setRole(role);
 			employeeRoleRepository.save(employeeRole);
 			return true;
 		} catch (Exception e) {
@@ -142,25 +156,25 @@ public class EmployeeService {
 				return getEmployeeListByRole(employeeList);
 			}
 		} catch (DataAccessException e) {
-			logger.error("Error in fetching all employees: {}", e.getMessage());
+			logger.error("Error in fetching all employees: ", e.getMessage());
 			throw new RuntimeException(e);
 		}
 		return null;
 	}
 
 	public Map<String, String> revokeRole(Integer adminId, Integer employeeId, Integer roleId) {
+		Map<String, String> message = new HashMap<>();
 		try {
-			Map<String, String> message = new HashMap<>();
-			employeeRoleRepository.findById(adminId).orElseThrow(() -> new RuntimeException("Employee not found."));
-			if (employeeRoleRepository.existsById(employeeId)) {
+			if (employeeRepository.existsById(employeeId) && employeeRepository.existsById(adminId)) {
 				employeeRoleRepository.deleteByEmployeeAndRole(employeeId, roleId);
 				message.put("Message", "Role deleted successfully");
 			} else
 				message.put("Message", "Employee not found");
 			return message;
 		} catch (Exception e) {
-			logger.info("Error in {}", e.getMessage());
-			throw new RuntimeException(e);
+			logger.info("Error in: ", e.getMessage());
+			message.put("Message", "Error in revoke roles");
+			return message;
 		}
 	}
 
@@ -188,14 +202,17 @@ public class EmployeeService {
 		return roles;
 	}
 
-	private void assignDefaultRoleToEmployee(Integer employeeId) {
-		Role role = roleRepository.findById(Constants.PRINCIPAL_INVESTIGATOR_ID)
-				.orElseThrow(() -> new RuntimeException("Default role not found"));
-		Employee employee = employeeRepository.findById(employeeId)
-				.orElseThrow(() -> new RuntimeException("Employee not found"));
-		EmployeeRole employeeRole = new EmployeeRole();
-		employeeRole.setEmployee(employee);
-		employeeRole.setRole(role);
-		employeeRoleRepository.save(employeeRole);
+	public Employee saveOrUpdateEmployee(Employee employee, SignUpOrUpdateDto signUpOrUpdate, Optional<Country> country) {
+		employee.setFirstname(signUpOrUpdate.getFirstname());
+		employee.setLastname(signUpOrUpdate.getLastname());
+		employee.setFullname(signUpOrUpdate.getFirstname() + " " + signUpOrUpdate.getLastname());
+		employee.setEmail(signUpOrUpdate.getEmail());
+		employee.setDesignation(signUpOrUpdate.getDesignation());
+		employee.setState(signUpOrUpdate.getState());
+		employee.setCountryCode(country.get());
+		employee.setPhoneNumber(signUpOrUpdate.getPhoneNumber());
+		employee.setUsername(signUpOrUpdate.getUsername());
+		employee.setPassword(signUpOrUpdate.getPassword());
+		return employee;
 	}
 }
