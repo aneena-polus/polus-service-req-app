@@ -1,10 +1,10 @@
 package com.polus.service.app.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
 public class TicketTypeDto {
 
 	private int adminId;

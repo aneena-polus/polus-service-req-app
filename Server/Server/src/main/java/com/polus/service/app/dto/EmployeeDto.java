@@ -9,7 +9,7 @@ import lombok.Setter;
 public class EmployeeDto {
 
 	private Integer employeeId;
-	private String firstName;
-	private String lastName;
+	private String fullname;
+	private String designation;
 	private List<RoleDto> roles;
 }

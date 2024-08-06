@@ -6,25 +6,28 @@
                     <h3 class="text-success py-3 text-center" title="heading" tabindex="0">Create Service Type</h3>
                     <div class="row mb-3">
                         <div class="col-12 fw-bold">
+                            <span class="text-danger">* </span>
                             <label class="form-label" for="service_type" tabindex="0">Service Type</label>
                         </div>
                         <div class="col-12">
                             <div class="form-outline">
                                 <input type="text" id="new_service_type" class="form-control input-sm field-border"
                                     name="service_type" tabindex="0" [(ngModel)]="serviceType"
+                                    [ngClass]="{'red-border-class': errorMessage}"
                                     aria-label="Click to enter a service type" aria-required="true" required />
                             </div>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-12 fw-bold">
+                            <span class="text-danger">* </span>
                             <label class="form-label" for="service_description" tabindex="0">Description</label>
                         </div>
                         <div class="col-12">
                             <div class="form-outline">
                                 <textarea class="form-control" id="description" rows="5" name="description" tabindex="0"
                                     aria-label="Click to enter a description of service" [(ngModel)]="serviceDesc"
-                                    aria-required="true" required></textarea>
+                                    [ngClass]="{'red-border-class': errorMessage}" aria-required="true" required></textarea>
                             </div>
                         </div>
                     </div>

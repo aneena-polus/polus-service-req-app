@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,7 +46,7 @@ public class EmployeeController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<Object> login(@RequestBody @Validated LoginRequest loginRequest) {
 		logger.info("Request for employee login.");
 		LoginResponse loginResponse = authService.login(loginRequest);
 		if (loginResponse == null) {
@@ -90,12 +91,5 @@ public class EmployeeController {
 	@ExceptionHandler(UsernameAlreadyExistsException.class)
 	public ResponseEntity<String> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException exception) {
 		return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
-	}
-
-	//Learning purpose
-	@GetMapping("/get")
-	public String getAll() {
-		String name = "Manesh";
-		return name;
 	}
 }

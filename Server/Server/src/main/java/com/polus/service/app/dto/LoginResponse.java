@@ -2,12 +2,14 @@ package com.polus.service.app.dto;
 
 import java.util.Date;
 import java.util.List;
-import com.polus.service.app.entities.Country;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class LoginResponse {
 
 	private Integer employeeId;
@@ -17,7 +19,7 @@ public class LoginResponse {
 	private String email;
 	private String designation;
 	private String state;
-	private Country countryCode;
+	private String countryCode;
 	private String phoneNumber;
 	private Date createdDate;
 	private String password;

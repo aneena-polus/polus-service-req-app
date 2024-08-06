@@ -27,7 +27,7 @@ export class StatuschangeComponent {
     }
 
     public performAction(): void {
-        if ( this.comment == '' ) {
+        if ( this.comment === '' && this.statusId === 4 ) {
 			this.errorMessage = 'Fields cannot be blank';
 		}
         else {

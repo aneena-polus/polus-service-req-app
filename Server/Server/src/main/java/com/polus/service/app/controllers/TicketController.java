@@ -1,5 +1,7 @@
 package com.polus.service.app.controllers;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,12 +17,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.opencsv.CSVWriter;
 import com.polus.service.app.dto.GenerateOrUpdateDto;
 import com.polus.service.app.dto.TicketResponseDto;
 import com.polus.service.app.dto.TicketStatusChangeDto;
 import com.polus.service.app.repository.TicketRepository;
 import com.polus.service.app.repository.TicketTypeRepository;
 import com.polus.service.app.services.TicketService;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/ticket")
@@ -99,4 +105,28 @@ public class TicketController {
 		logger.info("Request to fetch count of tickets based on employee and status");
 		return ResponseEntity.status(HttpStatus.OK).body(ticketService.getTicketsCount(employeeId));
 	}
+	
+//	@GetMapping("/export")
+//	public ResponseEntity<byte[]> exportUsersToCsv(HttpServletResponse response) throws IOException {
+//		List<TicketResponseDto> ticketResponse = ticketService.ticketResponse(1, 1, 0, 10);
+//
+//		// Create CSV content
+//		StringWriter sw = new StringWriter();
+//		CSVWriter writer = new CSVWriter(sw);
+//		String[] header = { "ID", "Ticket type", "Ticket Description", "Email" };
+//		writer.writeNext(header);
+//		for (TicketResponseDto responseDto : ticketResponse) {
+//			String[] line = { String.valueOf(responseDto.getId()), responseDto.getTicketType().getTicketType(), responseDto.getTicketDescription()};
+//			writer.writeNext(line);
+//		}
+//		writer.close();
+//
+//		// Set response headers
+//		response.setContentType("text/csv");
+//		String headerKey = "Content-Disposition";
+//		String headerValue = "attachment; filename=tickets.csv";
+//		response.setHeader(headerKey, headerValue);
+//
+//		return ResponseEntity.ok(sw.toString().getBytes());
+//	}
 }

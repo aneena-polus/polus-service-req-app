@@ -17,6 +17,7 @@ export class CreateserviceComponent {
     serviceDesc: string = '';
     employeeId: number | undefined;
     loggedInUser: Login = {} as Login;
+    errorMessage: string | null = null;
 
     constructor ( private _data_service: DataService,
                   private _dialogRef : MatDialogRef<AdminDashboardComponent>,
@@ -28,20 +29,25 @@ export class CreateserviceComponent {
     }
 
     public createNewSeviceType(): void {
-        const SERVICERO: CreateServiceType = {
-            adminId: this.employeeId,
-            typeName: this.serviceType,
-            typeDescription: this.serviceDesc,
-        };
-        this._data_service.createNewSeviceType( SERVICERO ).subscribe({
-            next: () => {
-                this.openCreateTicketMessage();
-                this._dialogRef.close();
-            },
-            error: (error) => {
-                console.error(error);
-            },
-        });
+        if ( this.serviceType === '' || this.serviceDesc === '' ) {
+			this.errorMessage = 'Fields cannot be blank';
+		}
+        else {
+            const SERVICERO: CreateServiceType = {
+                adminId: this.employeeId,
+                typeName: this.serviceType,
+                typeDescription: this.serviceDesc,
+            };
+            this._data_service.createNewSeviceType( SERVICERO ).subscribe({
+                next: () => {
+                    this.openCreateTicketMessage();
+                    this._dialogRef.close();
+                },
+                error: (error) => {
+                    console.error(error);
+                },
+            });
+        }
     }
 
     private openCreateTicketMessage(): void {

@@ -82,7 +82,7 @@ public class EmployeeService {
 				editResponse.setEmail(employee.getEmail());
 				editResponse.setDesignation(employee.getDesignation());
 				editResponse.setState(employee.getState());
-				editResponse.setCountryCode(employee.getCountryCode());
+				editResponse.setCountryCode(employee.getCountryCode().getCountryCode());
 				editResponse.setPhoneNumber(employee.getPhoneNumber());
 				return ResponseEntity.ok(editResponse);
 			}
@@ -110,7 +110,7 @@ public class EmployeeService {
 				loginResponse.setEmail(employee.getEmail());
 				loginResponse.setDesignation(employee.getDesignation());
 				loginResponse.setState(employee.getState());
-				loginResponse.setCountryCode(employee.getCountryCode());
+				loginResponse.setCountryCode(employee.getCountryCode().getCountryCode());
 				loginResponse.setPhoneNumber(employee.getPhoneNumber());
 				loginResponse.setCreatedDate(employee.getCreatedDate());
 				loginResponse.setRoles(getRole(employee));
@@ -183,8 +183,8 @@ public class EmployeeService {
 		for (Employee employee : employeeList) {
 			EmployeeDto list = new EmployeeDto();
 			list.setEmployeeId(employee.getEmployeeId());
-			list.setFirstName(employee.getFirstname());
-			list.setLastName(employee.getLastname());
+			list.setFullname(employee.getFullname());
+			list.setDesignation(employee.getDesignation());
 			list.setRoles(getRole(employee));
 			employeeDto.add(list);
 		}
