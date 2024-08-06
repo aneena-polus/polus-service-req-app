@@ -1,6 +1,7 @@
 package com.polus.service.app.entities;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Set;
 
@@ -14,14 +15,23 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @Entity
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
 @Table(name = "EMPLOYEE")
 public class Employee implements Serializable {
+
+	public Employee() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public Employee(int i, String string, String string2, String string3, String string4, String string5,
+			String string6, String string7, String string8, String string9, Timestamp valueOf, String string10) {
+		// TODO Auto-generated constructor stub
+	}
 
 	private static final long serialVersionUID = 1L;
 

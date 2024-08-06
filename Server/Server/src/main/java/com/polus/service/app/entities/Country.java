@@ -2,17 +2,21 @@ package com.polus.service.app.entities;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+
 import org.springframework.data.annotation.LastModifiedDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Entity
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "COUNTRY")
 public class Country implements Serializable {
 
